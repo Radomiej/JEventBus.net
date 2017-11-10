@@ -8,6 +8,7 @@ namespace Rad.EventBus.Tests.Events.Subscribers
     {
         public int fakeOneCount = 0;
 
+        [Subscribe]
         public void counterFakeOneEvents(FakeOneEvent e)
         {
             fakeOneCount++;

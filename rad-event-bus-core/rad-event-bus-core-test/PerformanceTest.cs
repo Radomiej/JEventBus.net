@@ -11,7 +11,7 @@ namespace Rad.EventBus.Tests.Events
         public void MassiveEventSenderTest()
         {
             SubscriptionCounter subscriptionCounter = new SubscriptionCounter();
-            RadBus bus = RadBus.GetDefault();
+            RadBus bus = RadBus.Default;
 
 
             long milliseconds = DateTimeOffset.Now.ToUnixTimeMilliseconds();
@@ -29,10 +29,10 @@ namespace Rad.EventBus.Tests.Events
         [TestMethod]
         public void MassiveEventSenderWithMassiveSubscriberTest()
         {
-            RadBus bus = RadBus.GetDefault();
+            RadBus bus = RadBus.Default;
 
             long milliseconds = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            for (int i = 0; i < 100000; i++)
+            for (int i = 0; i < 100; i++)
             {
                 bus.Register(new SubscriptionCounter());
             }
