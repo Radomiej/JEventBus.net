@@ -23,7 +23,7 @@ bus.Register(mySubscriber);
 
 ```csharp 
 
-bus.Post(fakeOneEvent);
+bus.Post(myEvent);
 
 ```
 
@@ -40,14 +40,14 @@ bus.Unregister(mySubscriber);
 ```csharp 
 
 class SubscriptionCounter
-    {
-        public int myEventCount = 0;
+{
+    public int myEventCount = 0;
 
-        [Subscribe]
-        public void counterMyEvents(MyEvent e)
-        {
-            myEventCount++;
-        }
+    [Subscribe]
+    public void counterMyEvents(MyEvent e)
+    {
+        myEventCount++;
     }
+}
 
 ```
