@@ -1,4 +1,4 @@
-# rad-event-bus.net
+# JEventBus.net
 Event Bus for .NET
 
 ## Fast start:
