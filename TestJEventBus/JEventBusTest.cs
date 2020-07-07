@@ -288,11 +288,30 @@ namespace TestJEventBus
             }
 
             long executionTime = NanoTime() - time;
-            // Console.Out.WriteLine($"Execution time: {executionTime / 1000000}");
             Console.WriteLine(
                 $"Execution time: {executionTime / 1000000} ms | {executionTime} ns | {executionTime / iteration} ns/event");
-            // Logger.Warning($"Execution time: {executionTime / 1000000}" );
             Assert.AreEqual(iteration, subscriber.EventCounter);
+        }
+        
+        [Test]
+        public void PerformanceTest2()
+        {
+            int iteration = 100000;
+            int counter = 0;
+            var subscriber = new RawSubscriber<TestEvent>(myEvent => counter++);
+            JEventBus.JEventBus.GetDefault().Register(this, subscriber);
+
+            var testEvent = new TestEvent();
+            long time = NanoTime();
+            for (int i = 0; i < iteration; i++)
+            {
+                JEventBus.JEventBus.GetDefault().Post(testEvent);
+            }
+
+            long executionTime = NanoTime() - time;
+            Console.WriteLine(
+                $"Execution time: {executionTime / 1000000} ms | {executionTime} ns | {executionTime / iteration} ns/event");
+            Assert.AreEqual(iteration, counter);
         }
 
         private static long NanoTime()

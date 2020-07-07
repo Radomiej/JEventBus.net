@@ -255,7 +255,6 @@ namespace JEventBus
                 _subscriptions.Add(eventType, new SortedList<PriorityDelegate>());
             }
 
-
             _subscriptions[eventType].Add(priorityDelegate);
             _stage?.AddSubscription(priorityDelegate, eventType);
             return priorityDelegate;
