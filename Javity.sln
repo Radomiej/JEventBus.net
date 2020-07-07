@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JEventBus", "JEventBus\JEventBus.csproj", "{D41B0C10-1BE5-4223-B675-BABB494CB2A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestJEventBus", "TestJEventBus\TestJEventBus.csproj", "{FC19ECD2-31B4-442A-BCC2-DACFD0714ED6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D41B0C10-1BE5-4223-B675-BABB494CB2A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D41B0C10-1BE5-4223-B675-BABB494CB2A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D41B0C10-1BE5-4223-B675-BABB494CB2A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D41B0C10-1BE5-4223-B675-BABB494CB2A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC19ECD2-31B4-442A-BCC2-DACFD0714ED6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC19ECD2-31B4-442A-BCC2-DACFD0714ED6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC19ECD2-31B4-442A-BCC2-DACFD0714ED6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC19ECD2-31B4-442A-BCC2-DACFD0714ED6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

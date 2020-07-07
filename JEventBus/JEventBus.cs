@@ -137,7 +137,7 @@ namespace JEventBus
                 PropagateEvent(eventObject);
                 ProcessEventInInterceptors(eventObject, _postInterceptors);
             }
-            catch (StopPropagationException stopPropagationException)
+            catch (StopPropagationException)
             {
                 ProcessEventInInterceptors(eventObject, _abortedInterceptors);
             }
