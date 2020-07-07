@@ -325,7 +325,7 @@ namespace TestJEventBus
             int iteration = 1000000;
             int counter = 0;
             var subscriber = new PerformanceSubscriber<TestEvent>(incoming => counter++);
-            JEventBus.JEventBus.GetDefault().RegisterMax(subscriber);
+            JEventBus.JEventBus.GetDefault().RegisterFast(subscriber);
             JEventBus.JEventBus.GetDefault().PerformanceMode = performanceMode;
             
             var testEvent = new TestEvent();

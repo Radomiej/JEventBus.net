@@ -198,7 +198,7 @@ namespace JEventBus
             }
         }
 
-        public void RegisterMax<T>(PerformanceSubscriber<T> subscriber)
+        public void RegisterFast<T>(PerformanceSubscriber<T> subscriber)
         {
             AddReceiver(subscriber);
             AddPerformanceSubscription(subscriber);
