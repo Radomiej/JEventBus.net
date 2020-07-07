@@ -273,12 +273,14 @@ namespace TestJEventBus
             Assert.AreEqual(100, subscriber.EventCounter);
         }
 
-        [Test]
-        public void PerformanceTest()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void PerformanceTest(bool performanceMode)
         {
             int iteration = 100000;
             var subscriber = new TestEventHandler();
             JEventBus.JEventBus.GetDefault().Register(subscriber);
+            JEventBus.JEventBus.GetDefault().PerformanceMode = performanceMode;
 
             var testEvent = new TestEvent();
             long time = NanoTime();
@@ -289,17 +291,19 @@ namespace TestJEventBus
 
             long executionTime = NanoTime() - time;
             Console.WriteLine(
-                $"Execution time: {executionTime / 1000000} ms | {executionTime} ns | {executionTime / iteration} ns/event");
+                $"Execution time: {executionTime / 1000000} ms | {executionTime} ns | {executionTime / iteration} ns/event & performance mode: {performanceMode}");
             Assert.AreEqual(iteration, subscriber.EventCounter);
         }
         
-        [Test]
-        public void PerformanceTest2()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void PerformanceTest2(bool performanceMode)
         {
             int iteration = 100000;
             int counter = 0;
             var subscriber = new RawSubscriber<TestEvent>(myEvent => counter++);
             JEventBus.JEventBus.GetDefault().Register(this, subscriber);
+            JEventBus.JEventBus.GetDefault().PerformanceMode = performanceMode;
 
             var testEvent = new TestEvent();
             long time = NanoTime();
@@ -310,7 +314,30 @@ namespace TestJEventBus
 
             long executionTime = NanoTime() - time;
             Console.WriteLine(
-                $"Execution time: {executionTime / 1000000} ms | {executionTime} ns | {executionTime / iteration} ns/event");
+                $"Execution time: {executionTime / 1000000} ms | {executionTime} ns | {executionTime / iteration} ns/event & performance mode: {performanceMode}");
+            Assert.AreEqual(iteration, counter);
+        }
+        
+        [TestCase(true)]
+        [TestCase(false)]
+        public void PerformanceTest3(bool performanceMode)
+        {
+            int iteration = 1000000;
+            int counter = 0;
+            var subscriber = new PerformanceSubscriber<TestEvent>(incoming => counter++);
+            JEventBus.JEventBus.GetDefault().RegisterMax(subscriber);
+            JEventBus.JEventBus.GetDefault().PerformanceMode = performanceMode;
+            
+            var testEvent = new TestEvent();
+            long time = NanoTime();
+            for (int i = 0; i < iteration; i++)
+            {
+                JEventBus.JEventBus.GetDefault().Post(testEvent);
+            }
+
+            long executionTime = NanoTime() - time;
+            Console.WriteLine(
+                $"Execution time: {executionTime / 1000000} ms | {executionTime} ns | {executionTime / iteration} ns/event & performance mode: {performanceMode}");
             Assert.AreEqual(iteration, counter);
         }
 

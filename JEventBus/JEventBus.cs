@@ -21,6 +21,8 @@ namespace JEventBus
         private static Dictionary<string, JEventBus> _eventBuses = new Dictionary<string, JEventBus>();
         private static JEventBus _defaultInstance;
 
+     
+
         public static JEventBus GetEventBusByName(string eventBusName)
         {
             return _eventBuses[eventBusName];
@@ -57,30 +59,29 @@ namespace JEventBus
             new SortedList<IRawInterceptor>(new RawInterceptorComparer());
 
         private string _name;
+        public bool PerformanceMode { get; set; }
 
         void Init(string eventBusName = "default")
         {
             _name = eventBusName;
 
-            if (_eventBuses.ContainsKey(_name))
+            if (!_eventBuses.ContainsKey(_name))
             {
-                // Debug.LogWarning("Overriding exist EventBus with name: " + _name);
+                _eventBuses.Add(_name, this);
             }
-
-            _eventBuses.Add(_name, this);
         }
 
         void OnDestroy()
         {
-            if (_defaultInstance == this)
-            {
-                //defaultInstance = null;
-            }
-
             _eventBuses.Remove(_name);
         }
 
         private SubscriptionStage _stage;
+
+        public JEventBus()
+        {
+            PerformanceMode = false;
+        }
 
         public void BeginStage()
         {
@@ -125,12 +126,19 @@ namespace JEventBus
 
         public void Post(object eventObject)
         {
+            if (PerformanceMode)
+            {
+                PropagateEvent(eventObject);
+                return;
+            }
+            
             if (!_subscriptions.ContainsKey(eventObject.GetType()))
             {
                 ProcessEventInInterceptors(eventObject, _unhandledInterceptors);
                 return;
             }
-
+           
+            
             try
             {
                 ProcessEventInInterceptors(eventObject, _preInterceptors);
@@ -146,9 +154,17 @@ namespace JEventBus
         private void PropagateEvent(object eventObject)
         {
             SortedList<PriorityDelegate> receiverDelegates = _subscriptions[eventObject.GetType()];
+            if(receiverDelegates == null) return;
+            
             int receiversCount = receiverDelegates.Count;
             for (int i = 0; i < receiversCount; i++)
             {
+                if (receiverDelegates[i].PerformanceMode)
+                {
+                    ((IPerformanceSubscriber)receiverDelegates[i]).SubscribeRaw(eventObject);
+                    continue;
+                }
+                
                 Delegate delegateToInvoke = receiverDelegates[i].Handler;
                 try
                 {
@@ -180,6 +196,25 @@ namespace JEventBus
                     throw;
                 }
             }
+        }
+
+        public void RegisterMax<T>(PerformanceSubscriber<T> subscriber)
+        {
+            AddReceiver(subscriber);
+            AddPerformanceSubscription(subscriber);
+            _receivers[subscriber].Add(subscriber);
+        }
+
+        private void AddPerformanceSubscription<T>(PerformanceSubscriber<T> subscriber)
+        {
+            Type type = subscriber.GetEventType();
+            if (!_subscriptions.ContainsKey(type))
+            {
+                _subscriptions.Add(type, new SortedList<PriorityDelegate>());
+            }
+
+            _subscriptions[type].Add(subscriber);
+            _stage?.AddSubscription(subscriber, type);
         }
 
         public delegate void RawSubscribe(object incomingEvent);

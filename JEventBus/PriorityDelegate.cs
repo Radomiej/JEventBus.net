@@ -6,11 +6,13 @@
     {
         public readonly int Priority;
         public readonly Delegate Handler;
-
-        public PriorityDelegate(int priority, Delegate handler)
+        public readonly bool PerformanceMode = false;
+        
+        public PriorityDelegate(int priority, Delegate handler, bool performanceMode = false)
         {
             Priority = priority;
             Handler = handler;
+            PerformanceMode = performanceMode;
         }
 
 
