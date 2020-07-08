@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JEventBus", "JEventBus\JEventBus.csproj", "{D41B0C10-1BE5-4223-B675-BABB494CB2A0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Javity.EventBus", "Javity.EventBus\Javity.EventBus.csproj", "{D41B0C10-1BE5-4223-B675-BABB494CB2A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestJEventBus", "TestJEventBus\TestJEventBus.csproj", "{FC19ECD2-31B4-442A-BCC2-DACFD0714ED6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Javity.EventBusTest", "Javity.EventBusTest\Javity.EventBusTest.csproj", "{FC19ECD2-31B4-442A-BCC2-DACFD0714ED6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
