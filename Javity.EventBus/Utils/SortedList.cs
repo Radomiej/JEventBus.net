@@ -5,8 +5,8 @@ namespace Javity.EventBus.Utils
 {
     public class SortedList<T> : ICollection<T>
     {
-        private List<T> m_innerList;
-        private Comparer<T> m_comparer;
+        private List<T> _mInnerList;
+        private readonly Comparer<T> _mComparer;
 
         public SortedList() : this(Comparer<T>.Default)
         {
@@ -14,14 +14,14 @@ namespace Javity.EventBus.Utils
 
         public SortedList(Comparer<T> comparer)
         {
-            m_innerList = new List<T>();
-            m_comparer = comparer;
+            _mInnerList = new List<T>();
+            _mComparer = comparer;
         }
 
         public void Add(T item)
         {
-            int insertIndex = FindIndexForSortedInsert(m_innerList, m_comparer, item);
-            m_innerList.Insert(insertIndex, item);
+            int insertIndex = FindIndexForSortedInsert(_mInnerList, _mComparer, item);
+            _mInnerList.Insert(insertIndex, item);
         }
 
         public bool Contains(T item)
@@ -34,16 +34,16 @@ namespace Javity.EventBus.Utils
         /// </summary>
         public int IndexOf(T item)
         {
-            int insertIndex = FindIndexForSortedInsert(m_innerList, m_comparer, item);
-            if (insertIndex == m_innerList.Count)
+            int insertIndex = FindIndexForSortedInsert(_mInnerList, _mComparer, item);
+            if (insertIndex == _mInnerList.Count)
             {
                 return -1;
             }
 
-            if (m_comparer.Compare(item, m_innerList[insertIndex]) == 0)
+            if (_mComparer.Compare(item, _mInnerList[insertIndex]) == 0)
             {
                 int index = insertIndex;
-                while (index > 0 && m_comparer.Compare(item, m_innerList[index - 1]) == 0)
+                while (index > 0 && _mComparer.Compare(item, _mInnerList[index - 1]) == 0)
                 {
                     index--;
                 }
@@ -59,7 +59,7 @@ namespace Javity.EventBus.Utils
             int index = IndexOf(item);
             if (index >= 0)
             {
-                m_innerList.RemoveAt(index);
+                _mInnerList.RemoveAt(index);
                 return true;
             }
 
@@ -68,42 +68,42 @@ namespace Javity.EventBus.Utils
 
         public void RemoveAt(int index)
         {
-            m_innerList.RemoveAt(index);
+            _mInnerList.RemoveAt(index);
         }
 
         public void CopyTo(T[] array)
         {
-            m_innerList.CopyTo(array);
+            _mInnerList.CopyTo(array);
         }
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            m_innerList.CopyTo(array, arrayIndex);
+            _mInnerList.CopyTo(array, arrayIndex);
         }
 
         public void Clear()
         {
-            m_innerList.Clear();
+            _mInnerList.Clear();
         }
 
         public T this[int index]
         {
-            get { return m_innerList[index]; }
+            get { return _mInnerList[index]; }
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            return m_innerList.GetEnumerator();
+            return _mInnerList.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return m_innerList.GetEnumerator();
+            return _mInnerList.GetEnumerator();
         }
 
         public int Count
         {
-            get { return m_innerList.Count; }
+            get { return _mInnerList.Count; }
         }
 
         public bool IsReadOnly

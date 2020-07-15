@@ -2,6 +2,6 @@
 {
     public class TestEventWithParam
     {
-        public int Param = 0;
+        public int Param;
     }
 }

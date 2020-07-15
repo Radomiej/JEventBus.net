@@ -21,7 +21,6 @@ namespace Javity.EventBus
         private static Dictionary<string, JEventBus> _eventBuses = new Dictionary<string, JEventBus>();
         private static JEventBus _defaultInstance;
 
-     
 
         public static JEventBus GetEventBusByName(string eventBusName)
         {
@@ -61,7 +60,7 @@ namespace Javity.EventBus
         private string _name;
         public bool PerformanceMode { get; set; }
 
-        void Init(string eventBusName = "default")
+        public void Init(string eventBusName = "default")
         {
             _name = eventBusName;
 
@@ -69,11 +68,6 @@ namespace Javity.EventBus
             {
                 _eventBuses.Add(_name, this);
             }
-        }
-
-        void OnDestroy()
-        {
-            _eventBuses.Remove(_name);
         }
 
         private SubscriptionStage _stage;
@@ -85,7 +79,11 @@ namespace Javity.EventBus
 
         public void BeginStage()
         {
-            if (_stage != null) throw new NotSupportedException("Before begin new stage you must close a previous one");
+            if (_stage != null)
+            {
+                throw new NotSupportedException("Before begin new stage you must close a previous one");
+            }
+
             _stage = new SubscriptionStage();
         }
 
@@ -107,21 +105,50 @@ namespace Javity.EventBus
             _stage = null;
         }
 
-        public void AddInterceptor(IRawInterceptor interceptor, InterceptorType interceptorType = InterceptorType.Pre)
+        public void AddInterceptor(IRawInterceptor interceptor)
         {
-            if (interceptorType == InterceptorType.Pre) _preInterceptors.Add(interceptor);
-            else if (interceptorType == InterceptorType.Post) _postInterceptors.Add(interceptor);
-            else if (interceptorType == InterceptorType.Unhandled) _unhandledInterceptors.Add(interceptor);
-            else if (interceptorType == InterceptorType.Aborted) _abortedInterceptors.Add(interceptor);
+            AddInterceptor(interceptor, InterceptorType.Pre);
+        }
+
+        public void AddInterceptor(IRawInterceptor interceptor, InterceptorType interceptorType)
+        {
+            if (interceptorType == InterceptorType.Pre)
+            {
+                _preInterceptors.Add(interceptor);
+            }
+            else if (interceptorType == InterceptorType.Post)
+            {
+                _postInterceptors.Add(interceptor);
+            }
+            else if (interceptorType == InterceptorType.Unhandled)
+            {
+                _unhandledInterceptors.Add(interceptor);
+            }
+            else if (interceptorType == InterceptorType.Aborted)
+            {
+                _abortedInterceptors.Add(interceptor);
+            }
         }
 
         public void RemoveInterceptor(IRawInterceptor interceptor,
             InterceptorType interceptorType = InterceptorType.Pre)
         {
-            if (interceptorType == InterceptorType.Pre) _preInterceptors.Remove(interceptor);
-            else if (interceptorType == InterceptorType.Post) _postInterceptors.Remove(interceptor);
-            else if (interceptorType == InterceptorType.Unhandled) _unhandledInterceptors.Remove(interceptor);
-            else if (interceptorType == InterceptorType.Aborted) _abortedInterceptors.Remove(interceptor);
+            if (interceptorType == InterceptorType.Pre)
+            {
+                _preInterceptors.Remove(interceptor);
+            }
+            else if (interceptorType == InterceptorType.Post)
+            {
+                _postInterceptors.Remove(interceptor);
+            }
+            else if (interceptorType == InterceptorType.Unhandled)
+            {
+                _unhandledInterceptors.Remove(interceptor);
+            }
+            else if (interceptorType == InterceptorType.Aborted)
+            {
+                _abortedInterceptors.Remove(interceptor);
+            }
         }
 
         public void Post(object eventObject)
@@ -131,14 +158,13 @@ namespace Javity.EventBus
                 PropagateEvent(eventObject);
                 return;
             }
-            
+
             if (!_subscriptions.ContainsKey(eventObject.GetType()))
             {
                 ProcessEventInInterceptors(eventObject, _unhandledInterceptors);
                 return;
             }
-           
-            
+
             try
             {
                 ProcessEventInInterceptors(eventObject, _preInterceptors);
@@ -153,19 +179,18 @@ namespace Javity.EventBus
 
         private void PropagateEvent(object eventObject)
         {
-            SortedList<PriorityDelegate> receiverDelegates = _subscriptions[eventObject.GetType()];
-            if(receiverDelegates == null) return;
-            
-            int receiversCount = receiverDelegates.Count;
-            for (int i = 0; i < receiversCount; i++)
+            SortedList<PriorityDelegate> subscription = _subscriptions[eventObject.GetType()];
+            if (subscription == null) return;
+
+            for (int i = 0; i < subscription.Count; i++)
             {
-                if (receiverDelegates[i].PerformanceMode)
+                if (subscription[i].PerformanceMode)
                 {
-                    ((IPerformanceSubscriber)receiverDelegates[i]).SubscribeRaw(eventObject);
+                    ((IPerformanceSubscriber) subscription[i]).SubscribeRaw(eventObject);
                     continue;
                 }
-                
-                Delegate delegateToInvoke = receiverDelegates[i].Handler;
+
+                Delegate delegateToInvoke = subscription[i].Handler;
                 try
                 {
                     delegateToInvoke?.DynamicInvoke(eventObject);
@@ -174,13 +199,15 @@ namespace Javity.EventBus
                 {
                     if (targetInvocationException.InnerException != null &&
                         targetInvocationException.InnerException is StopPropagationException stopPropagationException)
+                    {
                         throw stopPropagationException;
+                    }
                     throw;
                 }
             }
         }
 
-        private void ProcessEventInInterceptors(object eventObject, SortedList<IRawInterceptor> handlers)
+        private static void ProcessEventInInterceptors(object eventObject, SortedList<IRawInterceptor> handlers)
         {
             foreach (var interceptor in handlers)
             {
@@ -229,12 +256,21 @@ namespace Javity.EventBus
             _receivers[objectToRegister].Add(priorityDelegate);
         }
 
-        public void Register(object objectToRegister, bool silentMode = false)
+        public void Register(object objectToRegister)
+        {
+            Register(objectToRegister, false);
+        }
+
+        public void Register(object objectToRegister, bool silentMode)
         {
             bool alreadyRegistered = !AddReceiver(objectToRegister);
             if (alreadyRegistered)
             {
-                if (!silentMode) throw new RegisterObjectTwiceException();
+                if (!silentMode)
+                {
+                    throw new RegisterObjectTwiceException();
+                }
+
                 return;
             }
 
@@ -248,7 +284,10 @@ namespace Javity.EventBus
                     if (attributes[i] is Subscribe subscribe)
                     {
                         MethodInfo method = methods[m];
-                        if (method.GetParameters().Length != 1) continue;
+                        if (method.GetParameters().Length != 1)
+                        {
+                            continue;
+                        }
 
                         ParameterInfo firstArgument = method.GetParameters()[0];
                         List<Type> args = new List<Type>(
@@ -275,7 +314,10 @@ namespace Javity.EventBus
 
         private bool AddReceiver(object receiverToRegister)
         {
-            if (_receivers.ContainsKey(receiverToRegister)) return false;
+            if (_receivers.ContainsKey(receiverToRegister))
+            {
+                return false;
+            }
 
             _receivers.Add(receiverToRegister, new List<PriorityDelegate>());
             _stage?.AddReceiver(receiverToRegister);
@@ -297,7 +339,10 @@ namespace Javity.EventBus
 
         public void Unregister(object objectToUnregister)
         {
-            if (!_receivers.ContainsKey(objectToUnregister)) return;
+            if (!_receivers.ContainsKey(objectToUnregister))
+            {
+                return;
+            }
 
             MethodInfo[] methods = objectToUnregister.GetType().GetMethods();
             for (int m = 0; m < methods.Length; m++)

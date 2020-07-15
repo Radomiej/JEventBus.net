@@ -7,7 +7,11 @@ namespace Javity.EventBus
         private readonly Type _subscribeType;
         private readonly Action<T> _handler;
 
-        public PerformanceSubscriber(Action<T> handler, int priority = 0) : base(priority, null, true)
+        public PerformanceSubscriber(Action<T> handler) : this(handler, 0)
+        {
+        }
+
+        public PerformanceSubscriber(Action<T> handler, int priority) : base(priority, null, true)
         {
             _handler = handler;
             _subscribeType = typeof(T);

@@ -7,7 +7,10 @@ namespace Javity.EventBus.Utils
     {
         public override int Compare(IRawInterceptor x, IRawInterceptor y)
         {
-            if(x == null || y == null) throw new NotSupportedException("Comparable objects cannot be null");
+            if (x == null || y == null)
+            {
+                throw new NotSupportedException("Comparable objects cannot be null");
+            }
             return x.GetPriority() - y.GetPriority() ;
         }
     }

@@ -6,8 +6,12 @@
     {
         private readonly Action<T> _handler;
         private readonly int _priority;
-        
-        public RawSubscriber(Action<T> handler, int priority = 0)
+
+        public RawSubscriber(Action<T> handler) : this(handler, 0)
+        {
+        }
+
+        public RawSubscriber(Action<T> handler, int priority)
         {
             _handler = handler;
             this._priority = priority;

@@ -11,7 +11,7 @@ namespace Javity.EventBus.ResolverQueue
         private readonly Dictionary<Type, List<object>> _stored =
             new Dictionary<Type, List<object>>();
 
-        private StopPropagationException _stopPropagationException = new StopPropagationException();
+        private readonly StopPropagationException _stopPropagationException = new StopPropagationException();
         
         public ResolverQueue(JEventBus eventBus)
         {
@@ -24,7 +24,10 @@ namespace Javity.EventBus.ResolverQueue
         public void AddEventToResolveListener(AddEventToResolve addEventToResolve)
         {
             Type eventType = addEventToResolve.EventTypeToResolve;
-            if(_storedEvents.Contains(eventType)) return;
+            if (_storedEvents.Contains(eventType))
+            {
+                return;
+            }
             _storedEvents.Add(eventType);
             _stored.Add(eventType, new List<object>());
         }
