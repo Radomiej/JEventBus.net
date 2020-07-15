@@ -32,7 +32,7 @@ namespace Javity.EventBus
             if (_defaultInstance == null)
             {
                 _defaultInstance = new JEventBus();
-                _defaultInstance.Init();
+                _defaultInstance.Init("default");
             }
 
             return _defaultInstance;
@@ -60,7 +60,7 @@ namespace Javity.EventBus
         private string _name;
         public bool PerformanceMode { get; set; }
 
-        public void Init(string eventBusName = "default")
+        public void Init(string eventBusName)
         {
             _name = eventBusName;
 
@@ -180,7 +180,10 @@ namespace Javity.EventBus
         private void PropagateEvent(object eventObject)
         {
             SortedList<PriorityDelegate> subscription = _subscriptions[eventObject.GetType()];
-            if (subscription == null) return;
+            if (subscription == null)
+            {
+                return;
+            }
 
             for (int i = 0; i < subscription.Count; i++)
             {
