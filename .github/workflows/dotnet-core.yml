@@ -22,8 +22,4 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test CollectCoverage=true --results-directory:TestResult --collect:"Code Coverage" --no-restore --verbosity normal 
-    - name: Coveralls GitHub Action
-      uses: coverallsapp/github-action@v1.1.1
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+      run: dotnet test --no-restore --verbosity normal 
