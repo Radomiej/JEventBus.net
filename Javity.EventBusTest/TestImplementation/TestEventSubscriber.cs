@@ -6,7 +6,7 @@ namespace Javity.EventBusTest.TestImplementation
 {
     public class TestEventSubscriber : IRawSubscriber
     {
-        public int EventCounter = 0;
+        public int EventCounter;
         public void SubscribeRaw(object incomingEvent)
         {
            EventCounter++;

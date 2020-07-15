@@ -5,7 +5,7 @@ namespace Javity.EventBusTest.TestImplementation
 {
     public class TestEventHandler
     {
-        public int EventCounter = 0;
+        public int EventCounter;
         
         [Subscribe]
         public void TestEventListener(TestEvent testEvent)

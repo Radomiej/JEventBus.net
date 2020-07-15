@@ -6,7 +6,7 @@ namespace Javity.EventBusTest.TestImplementation
 {
     public class TestPriority2EventHandler
     {
-        public readonly int AssertPriority = 2;
+        private readonly int AssertPriority = 2;
 
         [Subscribe(2)]
         public void TestEventListener(TestEventWithParam testEvent)

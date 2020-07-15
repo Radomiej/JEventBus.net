@@ -4,11 +4,15 @@
 {
     public class PriorityDelegate : IComparable
     {
-        public readonly int Priority;
+        protected readonly int Priority;
         public readonly Delegate Handler;
-        public readonly bool PerformanceMode = false;
-        
-        public PriorityDelegate(int priority, Delegate handler, bool performanceMode = false)
+        public readonly bool PerformanceMode;
+
+        public PriorityDelegate(int priority, Delegate handler) : this(priority, handler, false)
+        {
+        }
+
+        public PriorityDelegate(int priority, Delegate handler, bool performanceMode)
         {
             Priority = priority;
             Handler = handler;
@@ -24,6 +28,11 @@
             }
 
             throw new NotSupportedException("Cannot compare PriorityDelegate with other type");
+        }
+
+        public Delegate GetHandler()
+        {
+            return Handler;
         }
     }
 }

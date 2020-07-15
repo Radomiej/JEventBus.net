@@ -91,6 +91,14 @@ namespace Javity.EventBusTest
                 JEventBus.GetDefault().Post(toBeAbortedEvent));
         }
 
+        [Test]
+        public void TestResolveUnhandledEvent()
+        {
+
+            JEventBus.GetDefault().Post(new TestEvent());
+            JEventBus.GetDefault().Post(new TestEventWithParam());
+            JEventBus.GetDefault().Post(new TestEventHandler());
+        }
 
         [Test]
         public void TestStage()

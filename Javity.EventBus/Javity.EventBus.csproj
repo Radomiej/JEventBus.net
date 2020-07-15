@@ -3,6 +3,13 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <RootNamespace>Javity.EventBus</RootNamespace>
+        <PackageVersion>1.1.0</PackageVersion>
+        <Authors>Radomiej</Authors>
+        <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/Radomiej/JEventBus.net</RepositoryUrl>
+        <AssemblyVersion>1.1.0</AssemblyVersion>
+        <FileVersion>1.1.0</FileVersion>
+        <NeutralLanguage>en</NeutralLanguage>
     </PropertyGroup>
 
 </Project>
