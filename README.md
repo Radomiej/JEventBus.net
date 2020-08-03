@@ -12,7 +12,8 @@ Event Bus for .NET
 
 ```csharp 
 
-RadBus bus = RadBus.Default;
+JEventBus bus = JEventBus.GetDefault();
+
 
 ```
 
