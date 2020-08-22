@@ -24,7 +24,7 @@
         {
             if(obj is PriorityDelegate other)
             {
-                return Priority - other.Priority ;
+                 return other.Priority - Priority;
             }
 
             throw new NotSupportedException("Cannot compare PriorityDelegate with other type");
