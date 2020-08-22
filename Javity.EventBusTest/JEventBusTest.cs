@@ -56,7 +56,7 @@ namespace Javity.EventBusTest
             var subscriber1 = new RawSubscriber<TestEventWithParam>(myEvent =>
             {
                 myEvent.Param++;
-                Assert.AreEqual(1, myEvent.Param);
+                Assert.AreEqual(3, myEvent.Param);
             });
             var subscriber2 = new RawSubscriber<TestEventWithParam>(myEvent =>
             {
@@ -66,7 +66,7 @@ namespace Javity.EventBusTest
             var subscriber3 = new RawSubscriber<TestEventWithParam>(myEvent =>
             {
                 myEvent.Param++;
-                Assert.AreEqual(3, myEvent.Param);
+                Assert.AreEqual(1, myEvent.Param);
             }, 2);
             JEventBus.GetDefault().Register(this, subscriber3);
             JEventBus.GetDefault().Register(this, subscriber2);
@@ -143,7 +143,7 @@ namespace Javity.EventBusTest
             var subscriber1 = new RawSubscriber<TestEventWithParam>(myEvent =>
             {
                 myEvent.Param++;
-                Assert.AreEqual(1, myEvent.Param);
+                Assert.AreEqual(3, myEvent.Param);
             });
             var subscriber2 = new RawSubscriber<TestEventWithParam>(myEvent =>
             {
@@ -153,7 +153,7 @@ namespace Javity.EventBusTest
             var subscriber3 = new RawSubscriber<TestEventWithParam>(myEvent =>
             {
                 myEvent.Param++;
-                Assert.AreEqual(3, myEvent.Param);
+                Assert.AreEqual(1, myEvent.Param);
             }, 3);
             JEventBus.GetDefault().Register(this, subscriber3);
             JEventBus.GetDefault().Register(this, subscriber2);
@@ -174,7 +174,7 @@ namespace Javity.EventBusTest
             JEventBus.GetDefault().AddInterceptor(new RawInterceptor(o =>
             {
                 aborted++;
-                Assert.AreEqual(2, (o as TestEventWithParam).Param);
+                Assert.AreEqual(1, (o as TestEventWithParam).Param);
             }), JEventBus.InterceptorType.Aborted);
 
             JEventBus.GetDefault().AddInterceptor(new RawInterceptor(o => { unhandled++; }),
@@ -198,7 +198,7 @@ namespace Javity.EventBusTest
             var toBeAbortedEvent = new TestEventWithParam();
             JEventBus.GetDefault().Post(toBeAbortedEvent);
             Assert.AreEqual(1, aborted);
-            Assert.AreEqual(2, toBeAbortedEvent.Param);
+            Assert.AreEqual(1, toBeAbortedEvent.Param);
         }
 
         [Test]
@@ -285,7 +285,7 @@ namespace Javity.EventBusTest
         [TestCase(false)]
         public void PerformanceTest(bool performanceMode)
         {
-            int iteration = 100000;
+            int iteration = 1000000;
             var subscriber = new TestEventHandler();
             JEventBus.GetDefault().Register(subscriber);
             JEventBus.GetDefault().PerformanceMode = performanceMode;
@@ -307,7 +307,7 @@ namespace Javity.EventBusTest
         [TestCase(false)]
         public void PerformanceTest2(bool performanceMode)
         {
-            int iteration = 100000;
+            int iteration = 1000000;
             int counter = 0;
             var subscriber = new RawSubscriber<TestEvent>(myEvent => counter++);
             JEventBus.GetDefault().Register(this, subscriber);
