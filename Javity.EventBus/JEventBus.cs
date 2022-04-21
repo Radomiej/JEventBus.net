@@ -138,7 +138,6 @@ namespace Javity.EventBus
 
         public void Post(object eventObject)
         {
-         
             if (PerformanceMode)
             {
                 PropagateEvent(eventObject);
@@ -146,7 +145,7 @@ namespace Javity.EventBus
             }
 
             var mainStage = BeginStage();
-            
+
             if (!_subscriptions.ContainsKey(eventObject.GetType()))
             {
                 ProcessEventInInterceptors(eventObject, _unhandledInterceptors);
@@ -207,15 +206,16 @@ namespace Javity.EventBus
                 return;
             }
 
-            for (int i = 0; i < subscription.Count; i++)
+            var innerCopy = subscription.TakeInnerCopy();
+            foreach (var priorityDelegate in innerCopy)
             {
-                if (subscription[i].PerformanceMode)
+                if (priorityDelegate.PerformanceMode)
                 {
-                    ((IPerformanceSubscriber) subscription[i]).SubscribeRaw(eventObject);
+                    ((IPerformanceSubscriber) priorityDelegate).SubscribeRaw(eventObject);
                     continue;
                 }
 
-                Delegate delegateToInvoke = subscription[i].Handler;
+                Delegate delegateToInvoke = priorityDelegate.Handler;
                 if (!PerformanceMode)
                 {
                     _stage.AddDelegate(delegateToInvoke);
