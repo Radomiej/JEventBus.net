@@ -87,7 +87,7 @@ namespace Javity.EventBusTest
                 new RawSubscriber<TestEventWithParam>(myEvent => { throw new NotSupportedException(); }, 2);
             JEventBus.GetDefault().Register(this, subscriberAborted);
             var toBeAbortedEvent = new TestEventWithParam();
-            Assert.Catch<TargetInvocationException>(() =>
+            Assert.Catch<JEventException>(() =>
                 JEventBus.GetDefault().Post(toBeAbortedEvent));
         }
 
@@ -98,38 +98,6 @@ namespace Javity.EventBusTest
             JEventBus.GetDefault().Post(new TestEvent());
             JEventBus.GetDefault().Post(new TestEventWithParam());
             JEventBus.GetDefault().Post(new TestEventHandler());
-        }
-
-        [Test]
-        public void TestStage()
-        {
-            int iteration = 100;
-
-
-            var subscriber1 = new RawSubscriber<TestEventWithParam>(myEvent => { myEvent.Param++; });
-            var subscriber2 = new RawSubscriber<TestEventWithParam>(myEvent => { myEvent.Param++; }, 1);
-            var subscriber3 = new RawSubscriber<TestEventWithParam>(myEvent => { myEvent.Param++; }, 3);
-            JEventBus.GetDefault().Register(this, subscriber3);
-            JEventBus.GetDefault().Register(this, subscriber2);
-            JEventBus.GetDefault().BeginStage();
-            JEventBus.GetDefault().Register(this, subscriber1);
-
-
-            for (int i = 0; i < iteration; i++)
-            {
-                var testEvent = new TestEventWithParam();
-                JEventBus.GetDefault().Post(testEvent);
-                Assert.AreEqual(3, testEvent.Param);
-            }
-
-            JEventBus.GetDefault().CloseStage();
-
-            for (int i = 0; i < iteration; i++)
-            {
-                var testEvent = new TestEventWithParam();
-                JEventBus.GetDefault().Post(testEvent);
-                Assert.AreEqual(2, testEvent.Param);
-            }
         }
 
         [Test]

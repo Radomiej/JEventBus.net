@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Javity.EventBus.DebugStage;
 using Javity.EventBus.Exceptions;
 using Javity.EventBus.Utils;
 
@@ -77,31 +78,15 @@ namespace Javity.EventBus
             PerformanceMode = false;
         }
 
-        public void BeginStage()
+        private bool BeginStage()
         {
-            if (_stage != null)
-            {
-                throw new NotSupportedException("Before begin new stage you must close a previous one");
-            }
-
+            if (_stage != null || PerformanceMode) return false;
             _stage = new SubscriptionStage();
+            return true;
         }
 
-        public void CloseStage()
+        private void CloseStage()
         {
-            foreach (var receiver in _stage.receivers)
-            {
-                Unregister(receiver);
-            }
-
-            foreach (var subscription in _stage.subscriptions)
-            {
-                foreach (var dDelegate in subscription.Value)
-                {
-                    _subscriptions[subscription.Key].Remove(dDelegate);
-                }
-            }
-
             _stage = null;
         }
 
@@ -153,12 +138,15 @@ namespace Javity.EventBus
 
         public void Post(object eventObject)
         {
+         
             if (PerformanceMode)
             {
                 PropagateEvent(eventObject);
                 return;
             }
 
+            var mainStage = BeginStage();
+            
             if (!_subscriptions.ContainsKey(eventObject.GetType()))
             {
                 ProcessEventInInterceptors(eventObject, _unhandledInterceptors);
@@ -175,10 +163,44 @@ namespace Javity.EventBus
             {
                 ProcessEventInInterceptors(eventObject, _abortedInterceptors);
             }
+            catch (JEventException)
+            {
+                ProcessEventInInterceptors(eventObject, _abortedInterceptors);
+                throw;
+            }
+            catch (Exception anyException)
+            {
+                if (anyException.InnerException != null &&
+                    anyException.InnerException is JEventException jEventException)
+                {
+                    throw jEventException;
+                }
+
+                if (_stage != null)
+                {
+                    throw new JEventException(_stage.PrintLog(), anyException);
+                }
+                else
+                {
+                    throw new JEventException(anyException.ToString(), anyException);
+                }
+            }
+            finally
+            {
+                if (mainStage)
+                {
+                    CloseStage();
+                }
+            }
         }
 
         private void PropagateEvent(object eventObject)
         {
+            if (!PerformanceMode)
+            {
+                _stage.AddEvent(eventObject);
+            }
+
             SortedList<PriorityDelegate> subscription = _subscriptions[eventObject.GetType()];
             if (subscription == null)
             {
@@ -194,6 +216,11 @@ namespace Javity.EventBus
                 }
 
                 Delegate delegateToInvoke = subscription[i].Handler;
+                if (!PerformanceMode)
+                {
+                    _stage.AddDelegate(delegateToInvoke);
+                }
+
                 try
                 {
                     delegateToInvoke?.DynamicInvoke(eventObject);
@@ -205,6 +232,7 @@ namespace Javity.EventBus
                     {
                         throw stopPropagationException;
                     }
+
                     throw;
                 }
             }
@@ -244,7 +272,6 @@ namespace Javity.EventBus
             }
 
             _subscriptions[type].Add(subscriber);
-            _stage?.AddSubscription(subscriber, type);
         }
 
         public delegate void RawSubscribe(object incomingEvent);
@@ -323,7 +350,6 @@ namespace Javity.EventBus
             }
 
             _receivers.Add(receiverToRegister, new List<PriorityDelegate>());
-            _stage?.AddReceiver(receiverToRegister);
             return true;
         }
 
@@ -336,7 +362,6 @@ namespace Javity.EventBus
             }
 
             _subscriptions[eventType].Add(priorityDelegate);
-            _stage?.AddSubscription(priorityDelegate, eventType);
             return priorityDelegate;
         }
 
